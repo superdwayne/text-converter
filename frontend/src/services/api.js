@@ -1,3 +1,5 @@
+import { decode as decodeToon } from '@toon-format/toon';
+
 // Use the same origin when deployed, or localhost for development
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:3001');
 
@@ -8,7 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' 
  */
 export async function compressText(text) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/compress`, {
+    const response = await fetch(`${API_BASE_URL}/api/compress?format=toon`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +23,13 @@ export async function compressText(text) {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const toonPayload = await response.text();
+    const data = decodeToon(toonPayload);
+
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('Unexpected response format from server.');
+    }
+
     return data;
   } catch (error) {
     if (error instanceof TypeError && error.message.includes('fetch')) {

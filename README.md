@@ -45,6 +45,8 @@ Textese is a form of written language that uses abbreviations and number substit
 
 **Endpoint**: `https://sms-six-mocha.vercel.app/api/compress`
 
+> Tip: Append `?format=toon` to receive the response in TOON format for improved token efficiency.
+
 ```bash
 curl -X POST https://sms-six-mocha.vercel.app/api/compress \
   -H "Content-Type: application/json" \
@@ -63,14 +65,14 @@ curl -X POST https://sms-six-mocha.vercel.app/api/compress \
 ### JavaScript Example
 
 ```javascript
-const response = await fetch('https://sms-six-mocha.vercel.app/api/compress', {
+const response = await fetch('https://sms-six-mocha.vercel.app/api/compress?format=toon', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ text: 'Hello, how are you doing today?' })
 });
 
-const data = await response.json();
-console.log(data.compressed); // "Hi, how r u doin 2day?"
+const toon = await response.text();
+console.log(toon);
 ```
 
 ### Python Example
