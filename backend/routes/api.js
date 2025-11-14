@@ -1,4 +1,5 @@
 import express from 'express';
+import { encode as encodeToon } from '@toon-format/toon';
 import { compressText, calculateReduction } from '../utils/compressor.js';
 
 const router = express.Router();
@@ -35,12 +36,17 @@ router.post('/compress', (req, res) => {
     const compressed = compressText(text);
     const reduction = calculateReduction(text, compressed);
 
-    // Return response
-    res.json({
+    const payload = {
       original: text,
-      compressed: compressed,
-      reduction: reduction
-    });
+      compressed,
+      reduction
+    };
+
+    if (req.query.format === 'toon') {
+      return res.type('text/plain').send(encodeToon(payload));
+    }
+
+    res.json(payload);
   } catch (error) {
     console.error('Error compressing text:', error);
     res.status(500).json({
